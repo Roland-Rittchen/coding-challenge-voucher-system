@@ -47,7 +47,7 @@ export async function getUserById(id: number) {
       id,
       username
     FROM
-      users
+      enterpriseUsers
     WHERE
       id = ${id}
   `;
@@ -58,10 +58,10 @@ export async function getUserByValidSessionToken(token: string | undefined) {
   if (!token) return undefined;
   const [user] = await sql<[User | undefined]>`
     SELECT
-      users.id,
-      users.username
+      enterpriseUsers.id,
+      enterpriseUsers.username
     FROM
-      users,
+      enterpriseUsers,
       sessions
     WHERE
       sessions.token = ${token} AND
@@ -73,7 +73,7 @@ export async function getUserByValidSessionToken(token: string | undefined) {
 
 export async function getUserByUsername(username: string) {
   const [user] = await sql<[{ id: number } | undefined]>`
-    SELECT id FROM users WHERE username = ${username}
+    SELECT id FROM enterpriseUsers WHERE username = ${username}
   `;
   return user && camelcaseKeys(user);
 }
@@ -85,7 +85,7 @@ export async function getUserWithPasswordHashByUsername(username: string) {
       username,
       password_hash
     FROM
-      users
+      enterpriseUsers
     WHERE
       username = ${username}
   `;
@@ -94,7 +94,7 @@ export async function getUserWithPasswordHashByUsername(username: string) {
 
 export async function createUser(username: string, passwordHash: string) {
   const [user] = await sql<[User]>`
-    INSERT INTO users
+    INSERT INTO enterpriseUsers
       (username, password_hash)
     VALUES
       (${username}, ${passwordHash})
