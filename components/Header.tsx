@@ -33,7 +33,7 @@ function Anchor({
 }
 
 export default function Header(props: Props) {
-  console.log(props);
+  console.log('props ' + props);
   return (
     <header css={headerStyles}>
       <div>

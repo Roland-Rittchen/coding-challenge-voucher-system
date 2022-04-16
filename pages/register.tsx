@@ -15,7 +15,6 @@ type Errors = { message: string }[];
 type Props = {
   refreshUserProfile: () => void;
   userObject: { username: string };
-  csrfToken: string;
 };
 export default function Register(props: Props) {
   const [username, setUsername] = useState('');
@@ -43,7 +42,6 @@ export default function Register(props: Props) {
             body: JSON.stringify({
               username: username,
               password: password,
-              csrfToken: props.csrfToken,
             }),
           });
 
@@ -109,7 +107,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getValidSessionByToken(token);
 
     if (session) {
-      console.log(session);
+      console.log('session ' + session);
       return {
         redirect: {
           destination: '/',
@@ -122,8 +120,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // 3. otherwise render the page
 
   return {
-    props: {
-      csrfToken: createCsrfToken(),
-    },
+    props: {},
   };
 }

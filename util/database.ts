@@ -47,7 +47,7 @@ export async function getUserById(id: number) {
       id,
       username
     FROM
-      enterpriseUsers
+      enterprise_users
     WHERE
       id = ${id}
   `;
@@ -58,14 +58,14 @@ export async function getUserByValidSessionToken(token: string | undefined) {
   if (!token) return undefined;
   const [user] = await sql<[User | undefined]>`
     SELECT
-      enterpriseUsers.id,
-      enterpriseUsers.username
+      enterprise_users.id,
+      enterprise_users.username
     FROM
-      enterpriseUsers,
+      enterprise_users,
       sessions
     WHERE
       sessions.token = ${token} AND
-      sessions.user_id = users.id AND
+      sessions.user_id = enterprise_users.id AND
       sessions.expiry_timestamp > now()
   `;
   return user && camelcaseKeys(user);
@@ -73,7 +73,7 @@ export async function getUserByValidSessionToken(token: string | undefined) {
 
 export async function getUserByUsername(username: string) {
   const [user] = await sql<[{ id: number } | undefined]>`
-    SELECT id FROM enterpriseUsers WHERE username = ${username}
+    SELECT id FROM enterprise_users WHERE username = ${username}
   `;
   return user && camelcaseKeys(user);
 }
@@ -85,7 +85,7 @@ export async function getUserWithPasswordHashByUsername(username: string) {
       username,
       password_hash
     FROM
-      enterpriseUsers
+      enterprise_users
     WHERE
       username = ${username}
   `;
@@ -94,7 +94,7 @@ export async function getUserWithPasswordHashByUsername(username: string) {
 
 export async function createUser(username: string, passwordHash: string) {
   const [user] = await sql<[User]>`
-    INSERT INTO enterpriseUsers
+    INSERT INTO enterprise_users
       (username, password_hash)
     VALUES
       (${username}, ${passwordHash})
@@ -165,4 +165,33 @@ export async function deleteExpiredSessions() {
   `;
 
   return sessions.map((session) => camelcaseKeys(session));
+}
+
+type Code = {
+  id: number;
+  code: string;
+};
+
+export async function createVoucherCode() {
+  const tmpCode = 'abcde';
+  const [code] = await sql<[Code | undefined]>`
+   INSERT INTO codes
+      (code)
+    VALUES
+      (${tmpCode})
+    RETURNING
+      *`;
+  return code;
+}
+
+export async function checkVoucherCode() {
+  const tmpCode = 'abcde';
+  const [code] = await sql<[Code | undefined]>`
+   INSERT INTO codes
+      (code)
+    VALUES
+      (${tmpCode})
+    RETURNING
+      *`;
+  return code;
 }

@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import Layout from '../components/Layout.tsx';
+import Layout from '../components/Layout';
 import { getValidSessionByToken } from '../util/database';
 import { LoginResponseBody } from './api/login';
 
@@ -126,7 +126,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getValidSessionByToken(token);
 
     if (session) {
-      console.log(session);
+      console.log('session ' + session);
       return {
         redirect: {
           destination: '/',
@@ -138,8 +138,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   // 3. Otherwise, generate CSRF token and render the page
   return {
-    props: {
-      csrfToken: createCsrfToken(),
-    },
+    props: {},
   };
 }

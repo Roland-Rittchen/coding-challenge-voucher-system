@@ -11,7 +11,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.sessionToken;
 
   if (token) {
-    console.log(token);
+    console.log('token ' + token);
     // 2. we want to delete the session from our database
     await deleteSessionByToken(token);
     // 3. we want to set the cookie destruction
