@@ -191,6 +191,7 @@ export async function checkVoucherCode(codeEntered: string) {
    WHERE
     code = (${codeEntered})
    `;
+  console.log(code);
   return code;
 }
 
