@@ -1,6 +1,7 @@
 import camelcaseKeys from 'camelcase-keys';
 import { config } from 'dotenv-safe';
 import postgres from 'postgres';
+import randomWords from 'random-words';
 
 config();
 
@@ -173,7 +174,11 @@ type Code = {
 };
 
 export async function createVoucherCode() {
-  const tmpCode = 'abcde';
+  const tmpCode = randomWords({
+    exactly: 1,
+    wordsPerString: 3,
+    separator: '-',
+  });
   const [code] = await sql<[Code | undefined]>`
    INSERT INTO codes
       (code)
@@ -184,14 +189,24 @@ export async function createVoucherCode() {
   return code;
 }
 
-export async function checkVoucherCode() {
-  const tmpCode = 'abcde';
+export async function checkVoucherCode(codeEntered: string) {
   const [code] = await sql<[Code | undefined]>`
-   INSERT INTO codes
-      (code)
-    VALUES
-      (${tmpCode})
-    RETURNING
-      *`;
+   SELECT *
+   FROM
+    codes
+   WHERE
+    code = (${codeEntered})
+   `;
+  return code;
+}
+
+export async function deleteVoucherCode(codeId: number) {
+  const [code] = await sql<[Code]>`
+  DELETE FROM
+    codes
+  WHERE
+    id = ${codeId}
+  RETURNING *
+`;
   return code;
 }

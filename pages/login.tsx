@@ -16,7 +16,6 @@ type Errors = { message: string }[];
 type Props = {
   refreshUserProfile: () => void;
   userObject: { username: string };
-  csrfToken: string;
 };
 
 export default function Login(props: Props) {
@@ -44,7 +43,6 @@ export default function Login(props: Props) {
             body: JSON.stringify({
               username: username,
               password: password,
-              csrfToken: props.csrfToken,
             }),
           });
 

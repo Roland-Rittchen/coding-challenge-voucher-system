@@ -16,10 +16,12 @@
     "cookie": "^0.5.0",
     "dotenv-cli": "^5.1.0",
     "dotenv-safe": "^8.2.0",
+    "export-to-csv": "^0.2.1",
     "js-cookie": "^3.0.1",
     "ley": "^0.7.1",
     "next": "12.1.5",
     "postgres": "^3.0.5",
+    "random-words": "^1.1.2",
     "react": "18.0.0",
     "react-dom": "18.0.0"
   },
