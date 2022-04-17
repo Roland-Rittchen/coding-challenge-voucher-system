@@ -1,7 +1,6 @@
 import camelcaseKeys from 'camelcase-keys';
 import { config } from 'dotenv-safe';
 import postgres from 'postgres';
-import randomWords from 'random-words';
 
 config();
 
@@ -168,18 +167,13 @@ export async function deleteExpiredSessions() {
   return sessions.map((session) => camelcaseKeys(session));
 }
 
-type Code = {
+export type Code = {
   id: number;
   code: string;
 };
 
-export async function createVoucherCode() {
-  const tmpCode = randomWords({
-    exactly: 1,
-    wordsPerString: 3,
-    separator: '-',
-  });
-  const [code] = await sql<[Code | undefined]>`
+export async function createVoucherCode(tmpCode: string) {
+  const [code] = await sql<[Code]>`
    INSERT INTO codes
       (code)
     VALUES

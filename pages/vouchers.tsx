@@ -4,18 +4,17 @@ import { ExportToCsv } from 'export-to-csv';
 import Head from 'next/head';
 import { useState } from 'react';
 import Layout from '../components/Layout';
-import { createVoucherCode } from '../util/database';
+import { VoucherResponseBody } from './api/buyVouchers';
 
 const options = {
-  fieldSeparator: ',',
-  quoteStrings: '"',
-  decimalSeparator: '.',
-  showLabels: true,
+  filename: 'VoucherCodes',
+  fieldSeparator: ';',
+  showLabels: false,
   showTitle: true,
-  title: 'My Awesome CSV',
+  title: 'Voucher Codes',
   useTextFile: false,
   useBom: true,
-  useKeysAsHeaders: true,
+  useKeysAsHeaders: false,
 };
 
 const csvExporter = new ExportToCsv(options);
@@ -24,28 +23,16 @@ const errorStyles = css`
   color: red;
 `;
 
+type Code = { code: string };
 type Props = {
   userObject: { username: string };
 };
 
+type Errors = { message: string }[];
+
 export default function Login(props: Props) {
   const [numberToBuy, setNumberToBuy] = useState(1);
-  const [errorText, setErrorText] = useState('');
-
-  async function buy() {
-    const codes: string[] = [];
-    for (let i = 0; i < numberToBuy; i++) {
-      const tmpCode = await createVoucherCode();
-      if (tmpCode) {
-        codes.push();
-      } else {
-        setErrorText('Something went wrong, try again');
-        break;
-      }
-    }
-    csvExporter.generateCsv(codes);
-    setNumberToBuy(1);
-  }
+  const [errors, setErrors] = useState<Errors>([]);
 
   return (
     <Layout userObject={props.userObject}>
@@ -69,12 +56,56 @@ export default function Login(props: Props) {
           setNumberToBuy(parseInt(e.target.value));
         }}
       />
-      <button onClick={buy} data-test-id="buy">
+      <button
+        onClick={async (event) => {
+          event.preventDefault();
+          const voucherResponse = await fetch('/api/buyVouchers', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              numberToBuy: numberToBuy,
+            }),
+          });
+
+          const voucherResponseBody =
+            (await voucherResponse.json()) as VoucherResponseBody;
+
+          if ('errors' in voucherResponseBody) {
+            setErrors(voucherResponseBody.errors);
+            return;
+          }
+          setErrors([]); // clear the errors - maybe not necessary with redirect
+
+          // reformat the Array to an array of objects to satisfy the CSV export
+          const csvCodes: Code[] = [];
+          for (const c of voucherResponseBody.codes) {
+            csvCodes.push({
+              code: c,
+            });
+          }
+          // csv export
+          csvExporter.generateCsv(csvCodes);
+
+          // reset value in the field
+          setNumberToBuy(1);
+        }}
+        data-test-id="buy"
+      >
         Buy Voucher Codes
       </button>
-      <div css={errorStyles}>{errorText}</div>
+      <div css={errorStyles}>
+        {errors.map((error) => {
+          return <div key={`error-${error.message}`}>{error.message}</div>;
+        })}
+      </div>
     </Layout>
   );
 }
 
-export async function getServerSideProps() {}
+/*
+export async function getServerSideProps() {
+  return {};
+}
+*/
