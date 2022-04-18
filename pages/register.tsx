@@ -60,6 +60,7 @@ export default function Register(props: Props) {
         <label>
           Username:{' '}
           <input
+            data-test-id="username-input"
             value={username}
             onChange={(event) => setUsername(event.currentTarget.value)}
           />
@@ -67,12 +68,13 @@ export default function Register(props: Props) {
         <label>
           Password:{' '}
           <input
+            data-test-id="password-input"
             type="password"
             value={password}
             onChange={(event) => setPassword(event.currentTarget.value)}
           />
         </label>
-        <button>Register</button>
+        <button data-test-id="register-button">Register</button>
       </form>
 
       <div css={errorStyles}>

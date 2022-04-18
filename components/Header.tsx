@@ -38,7 +38,7 @@ export default function Header(props: Props) {
     <header css={headerStyles}>
       <div>
         <Link href="/">
-          <a>Home</a>
+          <a data-test-id="home-link">Home</a>
         </Link>
         <Link href="/users/protected-user">
           <a data-test-id="header-management-link">Protected-User</a>
@@ -47,14 +47,21 @@ export default function Header(props: Props) {
       {props.userObject && <div>{props.userObject.username}</div>}
 
       {props.userObject ? (
-        <Anchor href="/logout">Logout</Anchor>
+        <>
+          <Link href="/vouchers">
+            <a data-test-id="vouchers-link">Vouchers</a>
+          </Link>
+          <Anchor href="/logout" data-test-id="logout-link">
+            Logout
+          </Anchor>
+        </>
       ) : (
         <>
           <Link href="/login">
-            <a>Login</a>
+            <a data-test-id="login-link">Login</a>
           </Link>
           <Link href="/register">
-            <a>Register</a>
+            <a data-test-id="register-link">Register</a>
           </Link>
         </>
       )}

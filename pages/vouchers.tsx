@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import { ExportToCsv } from 'export-to-csv';
-// import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import { useState } from 'react';
 import Layout from '../components/Layout';
@@ -22,6 +21,9 @@ const csvExporter = new ExportToCsv(options);
 const errorStyles = css`
   color: red;
 `;
+const voucherStyles = css`
+  margin: 10;
+`;
 
 type Code = { code: string };
 type Props = {
@@ -33,6 +35,7 @@ type Errors = { message: string }[];
 export default function Login(props: Props) {
   const [numberToBuy, setNumberToBuy] = useState(1);
   const [errors, setErrors] = useState<Errors>([]);
+  const [codes, setCodes] = useState<string[]>([]);
 
   return (
     <Layout userObject={props.userObject}>
@@ -77,7 +80,7 @@ export default function Login(props: Props) {
             return;
           }
           setErrors([]); // clear the errors - maybe not necessary with redirect
-
+          setCodes(voucherResponseBody.codes);
           // reformat the Array to an array of objects to satisfy the CSV export
           const csvCodes: Code[] = [];
           for (const c of voucherResponseBody.codes) {
@@ -85,7 +88,7 @@ export default function Login(props: Props) {
               code: c,
             });
           }
-          // csv export
+          // csv export file will be downloaded by the user
           csvExporter.generateCsv(csvCodes);
 
           // reset value in the field
@@ -100,12 +103,16 @@ export default function Login(props: Props) {
           return <div key={`error-${error.message}`}>{error.message}</div>;
         })}
       </div>
+      <br />
+      <div css={voucherStyles}>
+        {codes.map((code, index) => {
+          return (
+            <div key={`code-${code}`} data-test-id={`code-${index}`}>
+              {code}
+            </div>
+          );
+        })}
+      </div>
     </Layout>
   );
 }
-
-/*
-export async function getServerSideProps() {
-  return {};
-}
-*/

@@ -32,8 +32,12 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cookie": "^0.4.1",
     "@types/dotenv-safe": "^8.1.2",
+    "@types/expect-puppeteer": "^4.4.7",
+    "@types/jest-environment-puppeteer": "^5.0.0",
     "@types/js-cookie": "^3.0.1",
     "@types/node": "17.0.23",
+    "@types/puppeteer": "^5.4.5",
+    "@types/random-words": "^1.1.2",
     "@types/react": "18.0.1",
     "@types/react-dom": "18.0.0",
     "@typescript-eslint/eslint-plugin": "5.18.0",
@@ -55,6 +59,9 @@
     "eslint-plugin-sonarjs": "0.13.0",
     "eslint-plugin-testing-library": "5.2.1",
     "eslint-plugin-unicorn": "42.0.0",
+    "jest": "^27.5.1",
+    "jest-puppeteer": "^6.1.0",
+    "puppeteer": "^13.5.2",
     "typescript": "4.6.3"
   },
   "resolutions": {
