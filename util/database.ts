@@ -167,14 +167,13 @@ export async function deleteExpiredSessions() {
   return sessions.map((session) => camelcaseKeys(session));
 }
 
-type Code = {
+export type Code = {
   id: number;
   code: string;
 };
 
-export async function createVoucherCode() {
-  const tmpCode = 'abcde';
-  const [code] = await sql<[Code | undefined]>`
+export async function createVoucherCode(tmpCode: string) {
+  const [code] = await sql<[Code]>`
    INSERT INTO codes
       (code)
     VALUES
@@ -184,14 +183,25 @@ export async function createVoucherCode() {
   return code;
 }
 
-export async function checkVoucherCode() {
-  const tmpCode = 'abcde';
+export async function checkVoucherCode(codeEntered: string) {
   const [code] = await sql<[Code | undefined]>`
-   INSERT INTO codes
-      (code)
-    VALUES
-      (${tmpCode})
-    RETURNING
-      *`;
+   SELECT *
+   FROM
+    codes
+   WHERE
+    code = (${codeEntered})
+   `;
+  console.log(code);
+  return code;
+}
+
+export async function deleteVoucherCode(codeId: number) {
+  const [code] = await sql<[Code]>`
+  DELETE FROM
+    codes
+  WHERE
+    id = ${codeId}
+  RETURNING *
+`;
   return code;
 }

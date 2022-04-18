@@ -11,7 +11,6 @@ import {
 type LoginRequestBody = {
   username: string;
   password: string;
-  csrfToken: string;
 };
 
 type LoginNextApiRequest = Omit<NextApiRequest, 'body'> & {
